@@ -10,7 +10,7 @@ import { PaymentMethodType } from '@/types';
 export default function CheckoutPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState<boolean>(false);
-  const { items, getTotalAmount, getTotalItems, isLoggedIn } = useAppStore();
+  const { items, getTotalAmount, getTotalItems, isLoggedIn, user, accessToken, setAuth } = useAppStore();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('E_WALLET');
   const [selectedWallet, setSelectedWallet] = useState<'MOMO' | 'VNPAY' | 'ZALOPAY'>('MOMO');
@@ -24,7 +24,7 @@ export default function CheckoutPage() {
 
   // Thông tin nhận hàng & ghi chú
   const [notes, setNotes] = useState<string>('');
-  const [customerPhone, setCustomerPhone] = useState<string>('');
+  const [customerPhone, setCustomerPhone] = useState<string>(user?.phone || '');
   const [diningOption, setDiningOption] = useState<'DINE_IN' | 'TAKEAWAY'>('DINE_IN');
 
   // Trạng thái xử lý & giữ pendingOrderId khi retry sau PAYMENT_FAILED
@@ -36,6 +36,27 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Tự động điền mặc định số điện thoại đã đăng ký của khách hàng
+  useEffect(() => {
+    if (!mounted) return;
+    if (user?.phone) {
+      setCustomerPhone((prev) => prev || user.phone || '');
+    } else if (isLoggedIn && accessToken && user && !user.phone) {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      fetch(`${apiBase}/auth/me`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((me) => {
+          if (me?.phone) {
+            setAuth({ ...user, phone: me.phone }, accessToken);
+            setCustomerPhone((prev) => prev || me.phone);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [mounted, user, isLoggedIn, accessToken, setAuth]);
 
   const totalAmount = mounted ? getTotalAmount() : 0;
   const totalItems = mounted ? getTotalItems() : 0;
@@ -106,7 +127,7 @@ export default function CheckoutPage() {
 
       setPendingOrderId(null);
       setIsProcessing(false);
-      setCustomerPhone('');
+      setCustomerPhone(user?.phone || '');
       setNotes('');
       setCardNumber('');
       setCardHolder('');

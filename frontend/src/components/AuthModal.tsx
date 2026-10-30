@@ -177,6 +177,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           id: data.user.id,
           email: data.user.email,
           fullName: data.user.fullName || data.user.email.split('@')[0],
+          phone: data.user.phone || phone.trim() || '',
           role: data.user.role || 'CUSTOMER',
           loyaltyPoints: data.user.loyaltyPoints ?? 0,
         },

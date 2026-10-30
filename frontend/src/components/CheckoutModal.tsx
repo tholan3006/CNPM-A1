@@ -15,7 +15,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const { items, getTotalAmount, getTotalItems, isLoggedIn } = useAppStore();
+  const { items, getTotalAmount, getTotalItems, isLoggedIn, user, accessToken, setAuth } =
+    useAppStore();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('E_WALLET');
   const [selectedWallet, setSelectedWallet] = useState<'MOMO' | 'VNPAY' | 'ZALOPAY'>('MOMO');
@@ -29,7 +30,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   // Ghi chú đơn hàng & thông tin nhận hàng
   const [notes, setNotes] = useState<string>('');
-  const [customerPhone, setCustomerPhone] = useState<string>('');
+  const [customerPhone, setCustomerPhone] = useState<string>(user?.phone || '');
   const [diningOption, setDiningOption] = useState<'DINE_IN' | 'TAKEAWAY'>('DINE_IN');
 
   // Trạng thái thanh toán & giữ orderId để hỗ trợ Retry khi PAYMENT_FAILED
@@ -41,8 +42,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setErrorMessage(null);
+      if (user?.phone) {
+        setCustomerPhone((prev) => prev || user.phone || '');
+      } else if (isLoggedIn && accessToken && user) {
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+        fetch(`${apiBase}/auth/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((me) => {
+            if (me?.phone) {
+              setAuth({ ...user, phone: me.phone }, accessToken);
+              setCustomerPhone((prev) => prev || me.phone);
+            }
+          })
+          .catch(() => null);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, user, isLoggedIn, accessToken, setAuth]);
 
   if (!isOpen) return null;
 
@@ -109,7 +126,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
       setPendingOrderId(null);
       setIsProcessing(false);
-      setCustomerPhone('');
+      setCustomerPhone(user?.phone || '');
       setNotes('');
       setCardNumber('');
       setCardHolder('');

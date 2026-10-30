@@ -39,6 +39,7 @@ export interface UserProfile {
   id: string;
   email: string;
   fullName: string;
+  phone?: string;
   role: 'CUSTOMER' | 'BARISTA' | 'ADMIN';
   loyaltyPoints: number;
 }
