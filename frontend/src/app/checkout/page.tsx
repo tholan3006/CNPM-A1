@@ -43,7 +43,7 @@ export default function CheckoutPage() {
     if (user?.phone) {
       setCustomerPhone((prev) => prev || user.phone || '');
     } else if (isLoggedIn && accessToken && user && !user.phone) {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
       fetch(`${apiBase}/auth/me`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })

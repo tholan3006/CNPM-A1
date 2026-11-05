@@ -59,12 +59,12 @@ export class OrdersController {
   ) {
     let fromJwt = req.user?.id ?? req.user?.userId ?? req.user?.sub;
     if (!fromJwt) {
-      const authHeader = req.headers?.['authorization'];
-      if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+      const authHeader = req.headers?.['authorization'] || req.headers?.['Authorization'];
+      if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
         try {
           const token = authHeader.substring(7);
           const decoded: any = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-          fromJwt = decoded?.sub || decoded?.id;
+          fromJwt = decoded?.sub || decoded?.id || decoded?.userId;
         } catch {}
       }
     }
