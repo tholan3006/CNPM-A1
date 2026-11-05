@@ -57,7 +57,17 @@ export class OrdersController {
     @Headers('x-user-id') userIdHeader?: string,
     @Headers('x-dev-user-id') devUserIdHeader?: string,
   ) {
-    const fromJwt = req.user?.id ?? req.user?.userId ?? req.user?.sub;
+    let fromJwt = req.user?.id ?? req.user?.userId ?? req.user?.sub;
+    if (!fromJwt) {
+      const authHeader = req.headers?.['authorization'];
+      if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.substring(7);
+          const decoded: any = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+          fromJwt = decoded?.sub || decoded?.id;
+        } catch {}
+      }
+    }
     const effectiveUserId = fromJwt || userIdHeader || devUserIdHeader || userIdQuery;
     if (!effectiveUserId) {
       return [];
@@ -97,6 +107,16 @@ export class OrdersController {
 
     if (req.headers['x-user-id']) {
       return String(req.headers['x-user-id']);
+    }
+
+    const authHeader = req.headers?.['authorization'];
+    if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.substring(7);
+        const decoded: any = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        if (decoded?.sub) return String(decoded.sub);
+        if (decoded?.id) return String(decoded.id);
+      } catch {}
     }
 
     if (process.env.NODE_ENV !== 'production' && req.headers['x-dev-user-id']) {
