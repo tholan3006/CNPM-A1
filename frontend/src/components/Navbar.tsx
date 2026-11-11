@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/cartStore';
 import { AuthModal } from './AuthModal';
 
@@ -14,10 +13,8 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenCart,
-  onOpenHistory,
   onAuthSuccess,
 }) => {
-  const router = useRouter();
   const { user, isLoggedIn, logout, getTotalItems } = useAppStore();
   const [mounted, setMounted] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -29,14 +26,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const totalItems = mounted ? getTotalItems() : 0;
   const isBarista = mounted && isLoggedIn && user?.role === 'BARISTA';
-
-  const handleHistoryClick = () => {
-    if (onOpenHistory) {
-      onOpenHistory();
-    } else {
-      router.push('/orders');
-    }
-  };
 
   return (
     <>

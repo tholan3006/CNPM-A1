@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrderStatus, PaymentMethod, PaymentStatus } from '@prisma/client';
-import * as request from 'supertest';
+import request = require('supertest');
 import { AppModule } from './app.module';
 import { PrismaService } from './prisma/prisma.service';
 
