@@ -9,9 +9,11 @@ import {
   Req,
   Headers,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { OrderStatus } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersService } from './orders.service';
 import { OrderLifecycleService } from './order-lifecycle.service';
@@ -35,11 +37,13 @@ export class OrdersController {
   }
 
   /**
-   * Task 6: POST /orders
-   * Tạo đơn hàng mới từ giỏ hàng
+   * Task 6 & Task 7: POST /orders
+   * Tạo đơn hàng mới từ giỏ hàng (Bảo vệ bởi JwtAuthGuard)
    */
   @Post()
-  @ApiOperation({ summary: 'Tạo đơn hàng mới (Task 6)' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Tạo đơn hàng mới (Task 6 - Yêu cầu JWT Guard Task 7)' })
   create(@Req() req: any, @Body() dto: CreateOrderDto) {
     return this.ordersService.create(this.getUserId(req), dto);
   }

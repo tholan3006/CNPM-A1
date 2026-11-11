@@ -13,4 +13,11 @@ export class AppController {
   getHello() {
     return this.appService.getHello();
   }
+
+  @Get(['health', 'api/health'])
+  @ApiOperation({ summary: 'Kiểm tra sức khỏe hệ thống & kết nối Database (Task 5.2: GET /health)' })
+  @ApiResponse({ status: 200, description: 'Database và API hoạt động ổn định' })
+  getHealth() {
+    return this.appService.getHealth();
+  }
 }

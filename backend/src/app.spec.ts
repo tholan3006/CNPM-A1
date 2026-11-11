@@ -24,11 +24,17 @@ describe('BrewLite Backend E2E & Unit Suite (dom1)', () => {
         OR: [
           { idempotencyKey: { startsWith: 'dom1_' } },
           { order: { orderNumber: { startsWith: 'dom1_' } } },
+          { order: { user: { email: { startsWith: 'dom1_' } } } },
         ],
       },
     });
     await prisma.order.deleteMany({
-      where: { orderNumber: { startsWith: 'dom1_' } },
+      where: {
+        OR: [
+          { orderNumber: { startsWith: 'dom1_' } },
+          { user: { email: { startsWith: 'dom1_' } } },
+        ],
+      },
     });
     await prisma.user.deleteMany({
       where: { email: { startsWith: 'dom1_' } },
@@ -413,6 +419,116 @@ describe('BrewLite Backend E2E & Unit Suite (dom1)', () => {
           idempotencyKey: `${prefix}_idem_success_1`,
         })
         .expect(409);
+    });
+  });
+
+  describe('Task 5.2 & Full E2E Journey: Health Check + Menu -> Detail -> Auth -> Guarded Order -> Cashless Payment -> Confirmation', () => {
+    it('GET /health verifies system and PostgreSQL database connectivity', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/health')
+        .expect(200);
+
+      expect(res.body.status).toBe('ok');
+      expect(res.body.database).toBe('connected');
+      expect(res.body.timestamp).toBeDefined();
+    });
+
+    it('POST /orders is protected by JwtAuthGuard and rejects unauthenticated requests with 401', async () => {
+      await request(app.getHttpServer())
+        .post('/orders')
+        .send({
+          items: [
+            {
+              productId: activeProductId,
+              size: 'M',
+              qty: 1,
+            },
+          ],
+        })
+        .expect(401);
+    });
+
+    it('runs full End-to-End (E2E) flow from viewing menu to order confirmation', async () => {
+      // 1. Xem Menu (GET /products)
+      const menuRes = await request(app.getHttpServer())
+        .get('/products')
+        .expect(200);
+      const selectedProduct = menuRes.body.find(
+        (p: any) => p.id === activeProductId,
+      );
+      expect(selectedProduct).toBeDefined();
+
+      // 2. Xem Chi tiết món & Topping (GET /products/:id)
+      const detailRes = await request(app.getHttpServer())
+        .get(`/products/${selectedProduct.id}`)
+        .expect(200);
+      expect(detailRes.body.toppings.length).toBeGreaterThan(0);
+
+      // 3. Đăng nhập nhận JWT (POST /auth/login)
+      const loginRes = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: testEmail,
+          password: 'password123',
+        })
+        .expect(200);
+      const token = loginRes.body.access_token;
+      expect(token).toBeDefined();
+
+      // 4. Đặt đơn hàng có JWT Guard bảo vệ (POST /orders)
+      // Base price: 45,000 + Size M (+5,000) + Topping (7,000) = 57,000 VND
+      const orderRes = await request(app.getHttpServer())
+        .post('/orders')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          items: [
+            {
+              productId: activeProductId,
+              size: 'M',
+              qty: 1,
+              toppingIds: [availableToppingId],
+            },
+          ],
+          notes: 'E2E Test: Ít đá, uống tại quán',
+        })
+        .expect(201);
+
+      expect(orderRes.body.id).toBeDefined();
+      expect(orderRes.body.orderNumber).toMatch(/^BL/);
+      expect(orderRes.body.status).toBe(OrderStatus.PENDING);
+      expect(Number(orderRes.body.total)).toBe(57000);
+
+      const e2eOrderId = orderRes.body.id;
+
+      // 5. Thanh toán không tiền mặt Idempotent (POST /payments)
+      const payRes = await request(app.getHttpServer())
+        .post('/payments')
+        .set('Authorization', `Bearer ${token}`)
+        .set('Idempotency-Key', `${prefix}_e2e_pay_key`)
+        .send({
+          orderId: e2eOrderId,
+          method: PaymentMethod.E_WALLET,
+        })
+        .expect(201);
+
+      expect(payRes.body.status).toBe(PaymentStatus.SUCCESS);
+      expect(payRes.body.order.status).toBe(OrderStatus.PAID);
+      expect(payRes.body.transactionRef).toMatch(/^MOCK-/);
+
+      // 6. Xem xác nhận đơn & lịch sử đơn (GET /orders/:id & GET /orders/me)
+      const confirmRes = await request(app.getHttpServer())
+        .get(`/orders/${e2eOrderId}`)
+        .expect(200);
+      expect(confirmRes.body.status).toBe(OrderStatus.PAID);
+      expect(confirmRes.body.orderNumber).toBe(orderRes.body.orderNumber);
+
+      const historyRes = await request(app.getHttpServer())
+        .get('/orders/me')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      expect(
+        historyRes.body.some((o: any) => o.id === e2eOrderId && o.status === OrderStatus.PAID),
+      ).toBe(true);
     });
   });
 });
