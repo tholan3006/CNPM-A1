@@ -329,8 +329,10 @@ export default function MenuPage() {
                 >
                   <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-stone-100">
                     <Image src={p.imageUrl} alt={p.name} fill unoptimized className="object-cover group-hover:scale-102 transition-transform" />
-                    {isOutOfStock && (
+                    {isOutOfStock ? (
                       <div className="absolute inset-0 flex items-center justify-center bg-stone-900/60 text-white text-xs font-semibold">Hết hàng</div>
+                    ) : (
+                      <span className="absolute top-2 right-2 rounded bg-stone-900/60 px-1.5 py-0.5 text-[10px] text-white">Còn {p.stock}</span>
                     )}
                   </div>
                   <div className="mt-2.5 flex-1 flex flex-col justify-between">

@@ -29,6 +29,7 @@ yarn-error.log*
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/bootstrap.js
+!.vscode/docker-up.js
 .idea/
 .DS_Store
 Thumbs.db
