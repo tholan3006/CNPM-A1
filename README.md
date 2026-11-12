@@ -10,7 +10,7 @@
 
 ## Mục lục
 
-1. [Tổng quan dự án](#1-tổng-quan-dự-án)
+1. [Tổng quan đồ án](#1-tổng-quan-đồ-án)
 2. [Kiến trúc hệ thống và cấu trúc thư mục](#2-kiến-trúc-hệ-thống-và-cấu-trúc-thư-mục)
 3. [Danh mục sản phẩm và topping](#3-danh-mục-sản-phẩm-và-topping)
 4. [Product Backlog (10 Task Scrum)](#4-product-backlog-10-task-scrum)
@@ -25,7 +25,7 @@
 
 ---
 
-## 1. Tổng quan dự án
+## 1. Tổng quan đồ án
 
 BrewLite là ứng dụng hỗ trợ khách hàng đặt đồ uống và thanh toán trực tuyến tại quầy cà phê. Mục tiêu chính là giảm bớt thời gian chờ đợi xếp hàng của khách hàng trong giờ cao điểm và tự động hóa luồng tiếp nhận đơn hàng.
 
@@ -122,11 +122,11 @@ Dữ liệu hình ảnh được lưu trữ trực tiếp trong thư mục `fron
 
 ## 4. Product Backlog (10 Task Scrum)
 
-Danh sách 10 hạng mục công việc (Product Backlog Items) được triển khai trong dự án:
+Danh sách 10 hạng mục công việc (Product Backlog Items) được triển khai trong đồ án:
 
 | STT | Hạng mục công việc | Tiêu chí chấp nhận (Acceptance Criteria) |
 | :-: | :--- | :--- |
-| 1 | Khởi tạo dự án và cấu trúc | Tạo monorepo gồm 2 thư mục `frontend` và `backend`, chạy được Hello World, có file README, git repository và file cấu hình `.env.example`. |
+| 1 | Khởi tạo cấu trúc monorepo | Tạo monorepo gồm 2 thư mục `frontend` và `backend`, chạy được Hello World, có file README, git repository và file cấu hình `.env.example`. |
 | 2 | API danh sách sản phẩm | NestJS cung cấp `GET /products` và `GET /products/:id` trả về JSON danh sách món, đơn giá, hình ảnh từ cơ sở dữ liệu PostgreSQL qua Prisma ORM. |
 | 3 | Trang Menu (Frontend) | Next.js gọi API `/products`, hiển thị lưới sản phẩm, hỗ trợ lọc theo nhóm đồ uống, có trạng thái loading và empty state. |
 | 4 | Chi tiết và tùy chọn món | Modal chi tiết sản phẩm cho phép chọn size (S/M/L) và danh sách topping riêng cho từng món; tự động cập nhật tổng giá theo thời gian thực. |
@@ -228,7 +228,7 @@ Danh sách 10 hạng mục công việc (Product Backlog Items) được triển
 Hỗ trợ tương thích 100% trên cả **Windows, macOS và Linux**. Chỉ cần máy đã cài **Docker Desktop**:
 
 > 💡 **Khởi chạy bằng 1 lệnh duy nhất cho mọi hệ điều hành:**
-> Mở terminal / CMD tại thư mục dự án và chạy:
+> Mở terminal / CMD tại thư mục đồ án và chạy:
 > ```bash
 > npm run docker:up
 > ```
@@ -260,8 +260,8 @@ Các địa chỉ truy cập:
 
 ### 7.2. Cách 2: Chạy trực tiếp trong VS Code (Dành cho phát triển & debug)
 
-Dự án đã tích hợp script tự động hóa chuẩn bị môi trường:
-1. Mở thư mục dự án trong **VS Code**.
+Hệ thống đã tích hợp script tự động hóa chuẩn bị môi trường:
+1. Mở thư mục đồ án trong **VS Code**.
 2. Nhấn tổ hợp phím **`Ctrl + Shift + B`** (hoặc chọn menu *Terminal -> Run Build Task... -> Chạy Fullstack*).
 3. Hệ thống sẽ tự động:
    - Tạo file cấu hình `.env` cho backend và `.env.local` cho frontend.
@@ -402,13 +402,13 @@ Thứ tự 5 bước thực hiện khi demo sản phẩm cho Giảng viên:
 - **Sprint 3 (Thanh toán & Nghiệp vụ nâng cao):** Task 8, 9, 10 (Tích hợp cổng thanh toán giả lập, màn hình lịch sử đơn hàng, docker-compose, xử lý tranh chấp và idempotency).
 
 ### 11.2. Phân công 5 thành viên nhóm
-| Thành viên | MSSV | Nhiệm vụ phụ trách |
+| Thành&nbsp;viên | MSSV | Nhiệm vụ phụ trách |
 | :--- | :---: | :--- |
-| **Thành viên 1** | | Task 1 (Khởi tạo monorepo, cấu hình docker) và Task 9 (Trang lịch sử đơn hàng, docker-compose full, tài liệu demo). |
-| **Thành viên 2** | | Task 3 (Giao diện trang chủ menu, bộ lọc danh mục) và Task 4 (Modal tùy chọn size và topping theo món). |
-| **Thành viên 3** | | Task 5 (Quản lý giỏ hàng với Zustand) và Task 8 (Giao diện chọn thanh toán và popup thông báo). |
-| **Thành viên 4** | | Task 2 (Prisma schema, API lấy danh sách món) và Task 7 (Xác thực người dùng, băm mật khẩu, JWT Guard). |
-| **Thành viên 5** | | Task 6 (API tạo đơn hàng, validate dữ liệu) và Task 10 (State Machine, Idempotent, khóa tồn kho, tích điểm). |
+| **Phan&nbsp;Vũ&nbsp;Việt&nbsp;Quang** | 3124560072 | Task 1 (Khởi tạo monorepo, cấu hình docker) và Task 9 (Trang lịch sử đơn hàng, docker-compose full, tài liệu demo). |
+| **Trần&nbsp;Vĩnh&nbsp;Thọ&nbsp;Lân** | 3124560049 | Task 3 (Giao diện trang chủ menu, bộ lọc danh mục) và Task 4 (Modal tùy chọn size và topping theo món). |
+| **Nguyễn&nbsp;Tuấn&nbsp;Khôi** | 3124560043 | Task 5 (Quản lý giỏ hàng với Zustand) và Task 8 (Giao diện chọn thanh toán và popup thông báo). |
+| **Nguyễn&nbsp;Hữu&nbsp;Chí&nbsp;Công** | 3124720010 | Task 2 (Prisma schema, API lấy danh sách món) và Task 7 (Xác thực người dùng, băm mật khẩu, JWT Guard). |
+| **Thành&nbsp;viên&nbsp;5** | *(Cập nhật sau)* | Task 6 (API tạo đơn hàng, validate dữ liệu) và Task 10 (State Machine, Idempotent, khóa tồn kho, tích điểm). |
 
 ### 11.3. Biểu đồ Burndown Chart mẫu (20 Story Points - 10 ngày)
 
