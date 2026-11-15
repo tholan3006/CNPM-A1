@@ -408,7 +408,7 @@ Thứ tự 5 bước thực hiện khi demo sản phẩm cho Giảng viên:
 | **Trần&nbsp;Vĩnh&nbsp;Thọ&nbsp;Lân** | 3124560049 | Task 3 (Giao diện trang chủ menu, bộ lọc danh mục) và Task 4 (Modal tùy chọn size và topping theo món). |
 | **Nguyễn&nbsp;Tuấn&nbsp;Khôi** | 3124560043 | Task 5 (Quản lý giỏ hàng với Zustand) và Task 8 (Giao diện chọn thanh toán và popup thông báo). |
 | **Nguyễn&nbsp;Hữu&nbsp;Chí&nbsp;Công** | 3124720010 | Task 2 (Prisma schema, API lấy danh sách món) và Task 7 (Xác thực người dùng, băm mật khẩu, JWT Guard). |
-| **Thành&nbsp;viên&nbsp;5** | *(Cập nhật sau)* | Task 6 (API tạo đơn hàng, validate dữ liệu) và Task 10 (State Machine, Idempotent, khóa tồn kho, tích điểm). |
+| **Trần&nbsp;Võ&nbsp;Đại&nbsp;Thắng** | 3125560061 | Task 6 (API tạo đơn hàng, validate dữ liệu) và Task 10 (State Machine, Idempotent, khóa tồn kho, tích điểm). |
 
 ### 11.3. Biểu đồ Burndown Chart mẫu (20 Story Points - 10 ngày)
 
